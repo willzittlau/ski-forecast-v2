@@ -1,0 +1,134 @@
+<!--Inherit from base template-->
+{%extends 'base.html'%}
+<!--Body-->
+{%block content%}
+    <h1><u> {{header}} </u></h1>
+    <!--Google map embed-->
+    <div class="map">
+        <iframe width="100%" height="500" 
+        frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
+        src="{{ map_coordinates | safe }}"></iframe>
+    </div>
+    <!--Weather forecast section-->
+    <div class = "weather">
+        <div class ="weathergraph">
+            <h2>Weather Graphs</h2>
+            <!--Hide/Show buttons-->
+            <div class= "button-block">
+                <button class="pure-button" onclick="toggle_HRDPS();toggle_NAM();">Toggle 48H/3.5D Forecasts</button>   
+                <!--Hide/Show buttons <button class="pure-button" onclick="show_historical()">Hide/Show NAM</button> -->
+            </div>
+            <div class="pure-g">
+                <!--Forecast Graph-->
+                <div class="pure-u-1">
+                    <div class="l-box" id="48H" align="center">
+                        <h3>48H Forecast (GEM-LAM, 2.5km res)</h3>
+                        {{HRDPS_plot | safe}}
+                        <p>Model elevation: {{HRDPS_elevation}}</p>
+                    </div>
+                    <div class="l-box" id="72H" align="center" style="display:none;">
+                        <h3>3.5 Day Forecast (NAM, 12km res)</h3>
+                        {{NAM_plot | safe}}
+                        <p>Model elevation: {{NAM_elevation}}</p>
+                </div>
+                <!--Forecast Graph box 2 demo if historical gets added
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <div class="l-box" id="72H" align="center">
+                        <h3>3.5 Day Forecast (NAM, 12km res)</h3>
+                        {{NAM_plot | safe}}
+                        <p>Model elevation: {{NAM_elevation}}</p>
+                    </div>
+                </div>
+                -->
+            </div>
+        </div>
+        <div class="weather_summary">
+            {{summary[3] | safe}}
+        </div>
+    </div>
+    <!--Avy forecast section-->
+    <div class = "avalanche">
+        <div class ="avytitle">
+            <h2> Avalanche Forecast</h2>
+            <p>{{date_issued}}</p>
+        </div>
+        <!--Danger Ratings Forecast-->
+        <div class="dangerratings">
+            <h3>Danger Ratings:</h3>
+            <div class="pure-g">
+            <!--Day1-->
+                <div class="pure-u-1 pure-u-md-1-3">
+                    {{avy_danger[0][0] | safe}}
+                    <table class="pure-table pure-table-bordered" id="day1">
+                    {% for key, value in avy_danger[1][0].items() %}
+                        <tr>
+                            <td class="elev"> {{key}} </td>
+                            <td class="danger"> {{value}} </td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+            <!--Day2-->
+                <div class="pure-u-1 pure-u-md-1-3">
+                    {{avy_danger[0][1] | safe}}
+                    <table class="pure-table pure-table-bordered" id="day2">
+                    {% for key, value in avy_danger[1][1].items() %}
+                        <tr>
+                            <td class="elev"> {{key}} </td>
+                            <td class="danger"> {{value}} </td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+            <!--Day3-->
+                <div class="pure-u-1 pure-u-md-1-3">
+                    {{avy_danger[0][2] | safe}}
+                    <table class="pure-table pure-table-bordered" id="day3">
+                    {% for key, value in avy_danger[1][2].items() %}
+                        <tr>
+                            <td class="elev"> {{key}} </td>
+                            <td class="danger"> {{value}} </td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+            </div><br>
+        </div>
+        <!--Problems-->
+        <h3>Problems:</h3>
+        {% for problem in avy_problems %}
+            <div class ="avyproblem">
+                {{problem | safe}}
+            </div>
+        {% endfor %}
+        <!--Confidence-->
+        <div class="confidence">
+            <p><b>Confidence: </b> {{confidence}}</p>
+        </div>
+        <!--Highlights-->
+        <div class="highlights">
+            {{summary[0] | safe}}
+        </div>
+        <!--Weather / Snowpack Summary-->
+        <div class="pure-g">
+            <div class="pure-u-1 pure-u-md-1-2">
+                <div class="avy_summary">
+                    {{summary[1] | safe}}
+                </div>
+            </div>
+            <div class="pure-u-1 pure-u-md-1-2">
+                <div class="snow_summary">
+                    {{summary[2] | safe}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <!--Return Home-->
+    <a href="{{ url_for('index') }}"><button class="pure-button"> Return Home </button></a>
+{%endblock%}
+<!--JS block-->
+{%block javascript%}
+<script type="text/javascript" src = "{{ url_for('static', filename='tablecolor.js') }}"></script>
+<script type="text/javascript" src = "{{ url_for('static', filename='graphs.js') }}"></script>
+{%endblock%}
